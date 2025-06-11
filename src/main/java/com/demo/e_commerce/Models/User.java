@@ -59,14 +59,12 @@ public User() {
 
   
 
-  public User(Long idUser, String firstName, String lastName, String username, String email, Set<Role> roles,
-    String password) {
-  this.idUser = idUser;
-  this.firstName = firstName;
-  this.lastName = lastName;
+  
+
+
+  public User(String username, String email, String password) {
   this.username = username;
   this.email = email;
-  this.roles = roles;
   this.password = password;
 }
 
@@ -108,7 +106,7 @@ public User() {
     return roles;
   }
 
-  public void setUserRole(Set<Role> roles) {
+  public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
 
