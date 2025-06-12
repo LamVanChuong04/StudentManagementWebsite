@@ -15,10 +15,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.e_commerce.Models.ERole;
@@ -33,8 +36,10 @@ import com.demo.e_commerce.Repository.UserRepository;
 import com.demo.e_commerce.Service.UserDetailsImpl;
 import com.demo.e_commerce.jwt.JwtUtils;
 
+import jakarta.servlet.http.HttpServletResponse;
 
-@RestController
+
+@Controller
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
@@ -127,5 +132,38 @@ public class AuthController {
         .body(new MessageResponse("You've been signed out!"));
   }
 
+  @GetMapping("/signin")
+    public String login() {
+        return "auth/signin";
+    }
+    @GetMapping("/signup")
+    public String register() {
+        return "auth/signup";
+    }
+  @PostMapping("/auth/signin-form")
+  public String loginWithForm(@RequestParam String username,
+                              @RequestParam String password,
+                              HttpServletResponse response,
+                              Model model) {
+      try {
+          Authentication authentication = authenticationManager
+              .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+          UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+          ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+          response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+
+          return "redirect:/home"; // chuyển hướng sau khi đăng nhập thành công
+      } catch (Exception e) {
+          model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
+          return "auth/signin";
+      }
+  }
+  @GetMapping("/home")
+  public String home() {
+      return "home/index";
+  }
+  
 
 }
