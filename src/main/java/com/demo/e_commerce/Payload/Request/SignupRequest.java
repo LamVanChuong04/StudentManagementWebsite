@@ -72,7 +72,9 @@ public class SignupRequest {
         this.password = password;
     }
 
-    
+    public SignupRequest(){
+        
+    }
     
 }
 

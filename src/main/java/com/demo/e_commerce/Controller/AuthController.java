@@ -79,7 +79,7 @@ public class AuthController {
                                     userDetails.getEmail(),
                                     roles, jwtCookie.getValue()));
     }
-    @PostMapping("/signup")
+  @PostMapping("/signup")
   public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
     if (userRepository.existsByUsername(signUpRequest.getUsername())) {
       return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
@@ -136,12 +136,13 @@ public class AuthController {
   @GetMapping("/signin")
   public String showLoginForm(Model m) {
     m.addAttribute("loginRequest", new LoginRequest());
-      return "auth/signin"; // Tên file HTML
+    return "auth/signin"; // Tên file HTML
   }
 
     @GetMapping("/signup")
-    public String register() {
-        return "auth/signup";
+    public String register(Model m) {
+      m.addAttribute("signupRequest", new SignupRequest());
+      return "auth/signup";
     }
   @PostMapping("/signin-form")
   public String loginWithForm(@ModelAttribute LoginRequest loginRequest,
@@ -167,6 +168,58 @@ public class AuthController {
   public String home() {
       return "home/index";
   }
-  
+@PostMapping("/signup-form")
+public String signupForm(@ModelAttribute SignupRequest signUpRequest,
+                         Model model) {
+
+    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        model.addAttribute("error", "Tên đăng nhập đã được sử dụng!");
+        return "auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
+    }
+
+    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        model.addAttribute("error", "Email đã được sử dụng!");
+        return "auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
+    }
+
+    // Tạo user mới
+    User user = new User(
+        signUpRequest.getFirstName(),
+        signUpRequest.getLastName(),
+        signUpRequest.getUsername(),
+        signUpRequest.getEmail(),
+        encoder.encode(signUpRequest.getPassword())
+    );
+
+    Set<String> strRoles = signUpRequest.getRole();
+    Set<Role> roles = new HashSet<>();
+
+    if (strRoles == null) {
+        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+            .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
+        roles.add(userRole);
+    } else {
+        strRoles.forEach(role -> {
+            switch (role) {
+                case "admin":
+                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                        .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
+                    roles.add(adminRole);
+                    break;
+                default:
+                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
+                    roles.add(userRole);
+            }
+        });
+    }
+
+    user.setRoles(roles);
+    userRepository.save(user);
+
+    // Chuyển hướng sang trang đăng nhập sau khi đăng ký thành công
+    return "redirect:/auth/signin";
+}
+
 
 }

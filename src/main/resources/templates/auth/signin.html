@@ -64,16 +64,12 @@
           <label for="password">Password</label>
           <input type="password" th:field="*{password}" placeholder="Password" required />
 
-          
-
-          
-
           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 
           <button type="submit">Login</button>
 
           <div class="small">
-              Don't have an account? <a href="/register">Register here</a>
+              Don't have an account? <a href="/auth/signup">Register here</a>
           </div>
       </form>
   </div>
