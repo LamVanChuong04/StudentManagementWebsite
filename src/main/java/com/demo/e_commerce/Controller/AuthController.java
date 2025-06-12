@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -133,33 +134,35 @@ public class AuthController {
   }
 
   @GetMapping("/signin")
-    public String login() {
-        return "auth/signin";
-    }
+  public String showLoginForm(Model m) {
+    m.addAttribute("loginRequest", new LoginRequest());
+      return "auth/signin"; // Tên file HTML
+  }
+
     @GetMapping("/signup")
     public String register() {
         return "auth/signup";
     }
-  @PostMapping("/auth/signin-form")
-  public String loginWithForm(@RequestParam String username,
-                              @RequestParam String password,
+  @PostMapping("/signin-form")
+  public String loginWithForm(@ModelAttribute LoginRequest loginRequest,
                               HttpServletResponse response,
                               Model model) {
       try {
           Authentication authentication = authenticationManager
-              .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+              .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
           SecurityContextHolder.getContext().setAuthentication(authentication);
           UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
           ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
           response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
 
-          return "redirect:/home"; // chuyển hướng sau khi đăng nhập thành công
+          return "redirect:/auth/home";
       } catch (Exception e) {
           model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
           return "auth/signin";
       }
   }
+
   @GetMapping("/home")
   public String home() {
       return "home/index";
