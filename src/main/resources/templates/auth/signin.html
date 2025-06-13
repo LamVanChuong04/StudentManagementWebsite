@@ -1,10 +1,12 @@
 
 <!DOCTYPE html>
-<html lang="en"xmlns:th="http://www.thymeleaf.org"> 
+<html lang="en"xmlns:th="http://www.thymeleaf.org" 
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/layout}"> 
 
 <head>
   <meta charset="UTF-8">
-  <title>Login - FIEshop</title>
+  <title layout:fragment="title">Đăng nhập</title>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css"
       crossorigin="anonymous">
   <link rel="stylesheet" th:href="@{/css/demo.css}">
@@ -12,68 +14,37 @@
 
 <body>
 
-  <header class="header">
-      <div class="container">
-          <div class="header-left">
-              <img src="/images/logo.png" alt="Văn Rồm" class="logo" />
-          </div>
-          <div class="header-center">
-              <div class="search-box">
-                  <input type="text" placeholder="Tìm kiếm sản phẩm..." />
-                  <button><i class="fa fa-search"></i></button>
-              </div>
-          </div>
-          <div class="header-right">
-              <div class="header-item">
-                  <i class="fa fa-phone icon-circle"></i>
-                  <div class="info">
-                      <strong>1900 866 819</strong><br />
-                      <span>Hỗ trợ khách hàng</span>
-                  </div>
-              </div>
-              <div class="header-item">
-                  <i class="fa fa-user icon-circle"></i>
-                  <div class="info">
-                      <a href="/auth/signin"><strong>Đăng nhập</strong></a><br />
-                      <a href="/auth/signup"><span>Đăng ký</span></a>
-                  </div>
-              </div>
-              <div class="header-item cart-icon">
-                  <i class="fa fa-shopping-cart"></i>
-                  <span class="cart-badge">0</span>
-              </div>
-          </div>
-      </div>
-  </header>
+    <header th:replace="fragments/header :: header"></header>
+    <div layout:fragment="content">
+        <div class="login-box">
+            <h3>ĐĂNG NHẬP</h3>
+            
+                <!--
+                <c:if test="${param.error != null}">
+                    <div class="alert" style="color: red;">Invalid email or password.</div>
+                </c:if>
+                <c:if test="${param.logout != null}">
+                    <div class="alert" style="color: green;">Logout success.</div>
+                </c:if>
+                -->
 
-  <div class="login-box">
-      <h3>ĐĂNG NHẬP</h3>
+            <form th:action="@{/auth/signin-form}" th:object="${loginRequest}" method="post">
+                <label for="username">Username</label>
+                <input type="text" th:field="*{username}" placeholder="Username" required />
+                <label for="password">Password</label>
+                <input type="password" th:field="*{password}" placeholder="Password" required />
+
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+
+                <button type="submit">Login</button>
+
+                <div class="small">
+                    Don't have an account? <a href="/auth/signup">Register here</a>
+                </div>
+            </form>
+        </div>
+    </div>
     
-        <!--
-          <c:if test="${param.error != null}">
-              <div class="alert" style="color: red;">Invalid email or password.</div>
-          </c:if>
-          <c:if test="${param.logout != null}">
-              <div class="alert" style="color: green;">Logout success.</div>
-          </c:if>
-        -->
-
-      <form th:action="@{/auth/signin-form}" th:object="${loginRequest}" method="post">
-          <label for="username">Username</label>
-          <input type="text" th:field="*{username}" placeholder="Username" required />
-          <label for="password">Password</label>
-          <input type="password" th:field="*{password}" placeholder="Password" required />
-
-          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-
-          <button type="submit">Login</button>
-
-          <div class="small">
-              Don't have an account? <a href="/auth/signup">Register here</a>
-          </div>
-      </form>
-  </div>
-
 </body>
 
 </html>
