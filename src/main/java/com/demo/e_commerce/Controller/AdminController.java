@@ -22,6 +22,10 @@ public class AdminController {
     public String adminProduct() {
         return "admin/product";
     }
+    @GetMapping("/dashboard/order")
+    public String adminOrder() {
+        return "admin/order";
+    }
 
     
 }
