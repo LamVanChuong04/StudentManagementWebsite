@@ -14,5 +14,14 @@ public class AdminController {
     public String adminIndex() {
         return "admin/dashboard";
     }
+    @GetMapping("/dashboard/user")
+    public String adminUser() {
+        return "admin/user";
+    }
+    @GetMapping("/dashboard/product")
+    public String adminProduct() {
+        return "admin/product";
+    }
+
     
 }
