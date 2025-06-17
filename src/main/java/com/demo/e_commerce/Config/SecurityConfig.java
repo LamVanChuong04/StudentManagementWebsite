@@ -62,8 +62,9 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/public/**", "/**", "admin/**").permitAll()
-                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/public/**", "/**").permitAll()
+                .requestMatchers("admin/**").hasRole("ADMIN")
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().authenticated()
             );
             

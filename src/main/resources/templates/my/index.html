@@ -1,12 +1,18 @@
 
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/layout-user}">
 <head>
   <meta charset="UTF-8" />
   <title>Login</title>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css"
+      crossorigin="anonymous">
+  <link rel="stylesheet" th:href="@{/css/demo.css}">
 </head>
 <body>
-  <h2>TRANG HOME </h2>
+    <header th:replace="fragments/header-user :: header"></header>
+    <h2>TRANG HOME </h2>
 
   
 </body>

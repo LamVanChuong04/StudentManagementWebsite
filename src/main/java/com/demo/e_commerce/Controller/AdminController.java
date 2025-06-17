@@ -14,15 +14,15 @@ public class AdminController {
     public String adminIndex() {
         return "admin/dashboard";
     }
-    @GetMapping("/dashboard/user")
+    @GetMapping("/user")
     public String adminUser() {
         return "admin/user";
     }
-    @GetMapping("/dashboard/product")
+    @GetMapping("/product")
     public String adminProduct() {
         return "admin/product";
     }
-    @GetMapping("/dashboard/order")
+    @GetMapping("/order")
     public String adminOrder() {
         return "admin/order";
     }
