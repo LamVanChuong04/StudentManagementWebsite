@@ -41,7 +41,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 @Controller
-@RequestMapping("/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
@@ -126,100 +125,100 @@ public class AuthController {
   //   return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   // }
 
-  @PostMapping("/signout")
-  public ResponseEntity<?> logoutUser() {
-    ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
-    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(new MessageResponse("You've been signed out!"));
-  }
+    @PostMapping("/signout")
+    public ResponseEntity<?> logoutUser() {
+        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+            .body(new MessageResponse("You've been signed out!"));
+    }
 
-  @GetMapping("/signin")
-  public String showLoginForm(Model m) {
-    m.addAttribute("loginRequest", new LoginRequest());
-    return "auth/signin"; // Tên file HTML
-  }
+    @GetMapping("/signin")
+    public String showLoginForm(Model m) {
+        m.addAttribute("loginRequest", new LoginRequest());
+        return "auth/signin"; // Tên file HTML
+    }
 
     @GetMapping("/signup")
     public String register(Model m) {
       m.addAttribute("signupRequest", new SignupRequest());
       return "auth/signup";
     }
-  @PostMapping("/signin-form")
-  public String loginWithForm(@ModelAttribute LoginRequest loginRequest,
-                              HttpServletResponse response,
-                              Model model) {
-      try {
-          Authentication authentication = authenticationManager
-              .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    @PostMapping("/signin-form")
+    public String loginWithForm(@ModelAttribute LoginRequest loginRequest,
+                                HttpServletResponse response,
+                                Model model) {
+        try {
+            Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-          SecurityContextHolder.getContext().setAuthentication(authentication);
-          UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-          ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-          response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
 
-          return "redirect:/auth/home";
-      } catch (Exception e) {
-          model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
-          return "auth/signin";
-      }
-  }
-
-  @GetMapping("/home")
-  public String home() {
-      return "home/index";
-  }
-@PostMapping("/signup-form")
-public String signupForm(@ModelAttribute SignupRequest signUpRequest,
-                         Model model) {
-
-    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-        model.addAttribute("error", "Tên đăng nhập đã được sử dụng!");
-        return "auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
+            return "redirect:/my/home";
+        } catch (Exception e) {
+            model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
+            return "/signin";
+        }
     }
 
-    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-        model.addAttribute("error", "Email đã được sử dụng!");
-        return "auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
+    @GetMapping("/my/home")
+    public String home() {
+        return "my/index";
     }
+    @PostMapping("/signup-form")
+    public String signupForm(@ModelAttribute SignupRequest signUpRequest,
+                            Model model) {
 
-    // Tạo user mới
-    User user = new User(
-        signUpRequest.getFirstName(),
-        signUpRequest.getLastName(),
-        signUpRequest.getUsername(),
-        signUpRequest.getEmail(),
-        encoder.encode(signUpRequest.getPassword())
-    );
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            model.addAttribute("error", "Tên đăng nhập đã được sử dụng!");
+            return "auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
+        }
 
-    Set<String> strRoles = signUpRequest.getRole();
-    Set<Role> roles = new HashSet<>();
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            model.addAttribute("error", "Email đã được sử dụng!");
+            return "auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
+        }
 
-    if (strRoles == null) {
-        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-            .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
-        roles.add(userRole);
-    } else {
-        strRoles.forEach(role -> {
-            switch (role) {
-                case "admin":
-                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                        .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
-                    roles.add(adminRole);
-                    break;
-                default:
-                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                        .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
-                    roles.add(userRole);
-            }
-        });
+        // Tạo user mới
+        User user = new User(
+            signUpRequest.getFirstName(),
+            signUpRequest.getLastName(),
+            signUpRequest.getUsername(),
+            signUpRequest.getEmail(),
+            encoder.encode(signUpRequest.getPassword())
+        );
+
+        Set<String> strRoles = signUpRequest.getRole();
+        Set<Role> roles = new HashSet<>();
+
+        if (strRoles == null) {
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
+            roles.add(userRole);
+        } else {
+            strRoles.forEach(role -> {
+                switch (role) {
+                    case "admin":
+                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
+                        roles.add(adminRole);
+                        break;
+                    default:
+                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                            .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
+                        roles.add(userRole);
+                }
+            });
+        }
+
+        user.setRoles(roles);
+        userRepository.save(user);
+
+        // Chuyển hướng sang trang đăng nhập sau khi đăng ký thành công
+        return "redirect:/auth/signin";
     }
-
-    user.setRoles(roles);
-    userRepository.save(user);
-
-    // Chuyển hướng sang trang đăng nhập sau khi đăng ký thành công
-    return "redirect:/auth/signin";
-}
 
 
 }

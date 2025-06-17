@@ -14,7 +14,7 @@
     <div class="register-container" layout:fragment="content">
         <h3> ĐĂNG KÍ</h3>
 
-        <form th:action="@{/auth/signup-form}" th:object="${signupRequest}" method="post">
+        <form th:action="@{/signup-form}" th:object="${signupRequest}" method="post">
             <!--
           <c:set var="errorFirstName">
                 <form:errors path="firstName" cssClass="invalid-feedback" />
@@ -58,7 +58,7 @@
         </form>
 
         <div class="footer-link">
-            <p>Have an account? <a href="/auth/signin">Login here.</a></p>
+            <p>Have an account? <a href="/signin">Login here.</a></p>
         </div>
     </div>
 </body>

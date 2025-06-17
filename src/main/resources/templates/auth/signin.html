@@ -28,7 +28,7 @@
                 </c:if>
                 -->
 
-            <form th:action="@{/auth/signin-form}" th:object="${loginRequest}" method="post">
+            <form th:action="@{/signin-form}" th:object="${loginRequest}" method="post">
                 <label for="username">Username</label>
                 <input type="text" th:field="*{username}" placeholder="Username" required />
                 <label for="password">Password</label>
@@ -39,7 +39,7 @@
                 <button type="submit">Login</button>
 
                 <div class="small">
-                    Don't have an account? <a href="/auth/signup">Register here</a>
+                    Don't have an account? <a href="/signup">Register here</a>
                 </div>
             </form>
         </div>
