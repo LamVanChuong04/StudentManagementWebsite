@@ -4,14 +4,14 @@
     layout:decorate="~{layout/layout}">
 <head>
   <meta charset="UTF-8" />
-  <title>Register</title>
+  <title>Đăng ký</title>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css" crossorigin="anonymous">
   <link rel="stylesheet" th:href="@{/css/register.css}">
 </head>
 <body>
-    <header th:replace="fragments/header :: header"></header>
+    
 
-    <div class="register-container">
+    <div class="register-container" layout:fragment="content">
         <h3> ĐĂNG KÍ</h3>
 
         <form th:action="@{/auth/signup-form}" th:object="${signupRequest}" method="post">
