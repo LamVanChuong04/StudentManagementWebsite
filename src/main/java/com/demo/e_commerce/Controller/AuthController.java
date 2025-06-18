@@ -155,6 +155,8 @@ public class AuthController {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
             response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            System.out.println("Authorities: " + auth.getAuthorities());
 
             return "redirect:/my/home";
         } catch (Exception e) {
@@ -224,4 +226,9 @@ public class AuthController {
     public String getPageHome() {
         return "public/index";
     }
+    @GetMapping("/access-denied")
+    public String getDenyPage() {
+        return "public/deny";
+    }
+
 }

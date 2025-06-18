@@ -57,21 +57,30 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/public/**", "/**").permitAll()
-                .requestMatchers("admin/**").hasRole("ADMIN")
-                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                .anyRequest().authenticated()
-            );
-            
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf(csrf -> csrf.disable())
+        .exceptionHandling(exception -> exception
+            .authenticationEntryPoint(unauthorizedHandler)
+            .accessDeniedHandler((request, response, accessDeniedException) -> {
+                response.sendRedirect("/access-denied");
+            })
+        )
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            // Đặt rule bảo vệ trước
+            .requestMatchers("/admin/**").hasRole("ADMIN")
 
-        http.authenticationProvider(authenticationProvider(userDetailsService(null)));
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            // Các URL công khai
+            .requestMatchers("/public/**", "/css/**", "/js/**", "/images/**").permitAll()
 
-        return http.build();
-    }
+            // Những cái còn lại phải login
+            .anyRequest().authenticated()
+        );
+
+    http.authenticationProvider(authenticationProvider(userDetailsService(null)));
+    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+}
+
 }
