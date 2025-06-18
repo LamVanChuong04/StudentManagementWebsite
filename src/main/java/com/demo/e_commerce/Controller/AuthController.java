@@ -220,5 +220,8 @@ public class AuthController {
         return "redirect:/auth/signin";
     }
 
-
+    @GetMapping("/")
+    public String getPageHome() {
+        return "public/index";
+    }
 }

@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org"> 
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/layout}">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.3.0/css/all.css"
+        crossorigin="anonymous">
+        <link rel="stylesheet" th:href="@{/css/demo.css}">
     </head>
     <body>
+        <header th:replace="fragments/header :: header"></header>
         <h1> Hello, public page</h1>
         <script src="" async defer></script>
     </body>
