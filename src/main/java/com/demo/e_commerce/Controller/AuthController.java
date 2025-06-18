@@ -173,12 +173,12 @@ public class AuthController {
 
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             model.addAttribute("error", "Tên đăng nhập đã được sử dụng!");
-            return "auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
+            return "/auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             model.addAttribute("error", "Email đã được sử dụng!");
-            return "auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
+            return "/auth/signup"; // Hiển thị lại form đăng ký kèm lỗi
         }
 
         // Tạo user mới
