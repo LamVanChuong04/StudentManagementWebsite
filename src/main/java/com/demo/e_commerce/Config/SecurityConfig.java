@@ -57,7 +57,7 @@ public class SecurityConfig {
     }
 
     @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(csrf -> csrf.disable())
         .exceptionHandling(exception -> exception
             .authenticationEntryPoint(unauthorizedHandler)
@@ -69,7 +69,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .authorizeHttpRequests(auth -> auth
             // Đặt rule bảo vệ trước
             .requestMatchers("/admin/**").hasRole("ADMIN")
-
+            .requestMatchers("/signin", "/signup").permitAll()
             // Các URL công khai
             .requestMatchers("/public/**", "/css/**", "/js/**", "/images/**").permitAll()
 
